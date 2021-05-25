@@ -1,0 +1,37 @@
+{
+  "id": "2569848",
+  "name": "fileHttp",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "7531683",
+      "name": "二维码",
+      "font_class": "barcode-qr",
+      "unicode": "e61c",
+      "unicode_decimal": 58908
+    },
+    {
+      "icon_id": "9243440",
+      "name": "文件",
+      "font_class": "wenjian",
+      "unicode": "e61e",
+      "unicode_decimal": 58910
+    },
+    {
+      "icon_id": "14978113",
+      "name": "下载",
+      "font_class": "xiazai",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "19671108",
+      "name": "文件夹",
+      "font_class": "wenjianjia",
+      "unicode": "e7a7",
+      "unicode_decimal": 59303
+    }
+  ]
+}

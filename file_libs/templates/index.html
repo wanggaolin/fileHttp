@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTTP-文件服务器</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <link href="/static/libs/bootstrap-5.1/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/static/css/site.css?n={{n}}" rel="stylesheet"/>
+    <link rel="shortcut icon" href="/h5-check/static/h5/image/favicon.ico?v=1594890432" type="image/x-icon" />
+</head>
+<body>
+<div class="index-main">
+    <div>
+        <span>位置: </span>
+        <span class="c-666"><a href="/">/</a></span>
+        {% for i in file_list.path_dir %}
+            <span class="c-999 en">&gt;</span>
+            <span class="c-666"><a href="/?dir={{ i.path }}">{{ i.name }}</a></span>
+        {% endfor %}
+    </div>
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th scope="col">名称</th>
+          <th scope="col">大小</th>
+          <th scope="col">修改时间</th>
+          <th scope="col">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in file_list.file_list %}
+        <tr>
+          <td>
+            {% if i.directory %}
+              <svg class="icon" aria-hidden="true"><use xlink:href="#icon-wenjianjia"></use></svg> <a href="/?dir={{ i.file_full }}">{{ i.file_name }}</a>
+            {% else %}
+              <svg class="icon" aria-hidden="true"><use xlink:href="#icon-wenjian"></use></svg> {{ i.file_name }}
+            {% endif %}
+          </td>
+          <td>{{ i.size }}</td>
+          <td>{{ i.time }}</td>
+          <td>
+            {% if not i.directory %}
+              <a href="/file/download?dir={{ dir_name }}&file={{ i.file_name }}"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-xiazai"></use></svg></a>
+              <svg class="icon code-icon" dir="{{ i.file_full }}" file="{{ i.file_name }}" aria-hidden="true"><use xlink:href="#icon-barcode-qr"></use></svg>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+<img src="" alt="二维码" id="file_code" style="display: none">
+<!--/static/libs/bootstrap-5.1/1.js-->
+<!--<script type="text/javascript" src="/static/site-admin/js/messages_zh.min.js?v=1594890432"></script>-->
+<script type="text/javascript" src="/static/libs/icon/iconfont.js?n={{ n }}"></script>
+<script type="text/javascript" src="/static/js/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="/static/js/site.js?n={{ n }}"></script>
+<script>
+    $(function () {
+        $(".code-icon").hover(function(){
+            console.log($(this).attr("dir"))
+            code_image_show($(this).attr("dir"),$(this).attr("file"));
+        },function(){
+           code_image_hide();
+        })
+    })
+
+</script>
+</body>
+</html>

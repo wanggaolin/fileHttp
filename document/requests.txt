@@ -1,0 +1,4 @@
+pip2 install Flask==1.1.4
+configparser==4.0.2
+image==1.5.33
+qrcode==6.1

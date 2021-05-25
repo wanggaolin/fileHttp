@@ -1,0 +1,25 @@
+body{
+    background: #f9f9f9;
+}
+.index-main{
+    padding: 20px;
+}
+.icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+}
+
+#file_code{
+    width: 170px;
+    height: 170px;
+    border: #e4e4e4 solid 1px;
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -100%);
+    -webkit-box-shadow:0px 3px 3px #c8c8c8 ;
+    -moz-box-shadow:0px 3px 3px #c8c8c8 ;
+    box-shadow:0px 3px 3px #c8c8c8 ;
+}
