@@ -6,6 +6,7 @@ import json
 import urllib
 app = Flask(__name__)
 import time
+import traceback
 n = int(time.time())
 cfg_conf = get_conf()
 
@@ -27,8 +28,6 @@ def api_check_v3(*args,**kwargs):
     def decorator_v3(func):
         def wrapper_v3(*args, **kwargs):
             try:
-                import traceback
-                print request,args,kwargs,args,1111
                 if request.method == "POST":
                     req_token = request.args.get("token", False)
                     req_json = json.loads(urllib.unquote(request.args.get("data", False)))
@@ -38,7 +37,6 @@ def api_check_v3(*args,**kwargs):
                     req_json = json.loads(urllib.unquote(request.args.get("data", False)))
                     req_time = int(request.args.get("time", False))
             except Exception,e:
-                print traceback.print_exc()
                 return "请求参数格式错误"
             if not min_size < (time.time()-req_time) < max_size:
                 return "token已过期"
@@ -49,18 +47,38 @@ def api_check_v3(*args,**kwargs):
         return wrapper_v3
     return decorator_v3
 
+# def error_code(*args,**kwargs):
+#     def decorator_error(func_error):
+#         def wrapper_error(*args, **kwargs):
+#             try:
+#                 return func_error(*args, **kwargs)
+#             except ValueError,e:
+#                 return e.message,503
+#             except Exception,e:
+#                 return "code error",500
+#         return wrapper_error
+#     return decorator_error
+
+def error_code(*args,**kwargs):
+    def decorator_error(func2):
+        def wrapper_error(*args, **kwargs):
+            return func2(*args, **kwargs)
+        return wrapper_error
+    return decorator_error
+
 @app.route('/',methods=["GET"])
 @auth_verify(token="dns_zone")
+@error_code()
 def views_file_list():
     dir_name = request.args.get("dir", "")
     n = int(time.time())
     return render_template('index.html', file_list=file_manger().file_list(dir_name=dir_name),dir_name=dir_name,n=n)
 
 @app.route('/file/download',methods=["GET"])
+@error_code(a=1)
 def views_file_download():
-    req_data = json.loads(urllib.unquote(request.args.get("data", False)))
-    dir_name = req_data.get("dir","")
-    file_path = req_data.get("file","")
+    dir_name = request.args.get("dir","")
+    file_path = request.args.get("file","")
     file_path_full = file_manger().file_path(dir_name=dir_name, path_name=file_path)
     if file_path_full:
         def file_send():
@@ -75,11 +93,10 @@ def views_file_download():
         response.headers["Content-disposition"] = 'attachment; filename=%s' % file_path
         return response
 
-
 @app.route('/file/secure', methods=["GET"])
-@api_check_v3(min_size=60*60*5,max_size=60*60*5)
+@api_check_v3(min_size=-(60*60*5),max_size=60*60*5)
 def views_file_download_secure():
-    req_data = json.loads(request.args.get("data", "{}"))
+    req_data = json.loads(urllib.unquote(request.args.get("data", False)))
     dir_name = req_data.get("dir", "")
     file_path = req_data.get("file", "")
     file_path_full = file_manger().file_path(dir_name=dir_name, path_name=file_path)
