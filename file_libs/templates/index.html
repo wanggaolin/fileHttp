@@ -42,7 +42,7 @@
           <td>
             {% if not i.directory %}
               <a href="/file/download?dir={{ dir_name }}&file={{ i.file_name }}"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-xiazai"></use></svg></a>
-              <svg class="icon code-icon" dir="{{ i.file_full }}" file="{{ i.file_name }}" aria-hidden="true"><use xlink:href="#icon-barcode-qr"></use></svg>
+              <svg class="icon code-icon" dir="{{ dir_name }}" file="{{ i.file_name }}" aria-hidden="true"><use xlink:href="#icon-barcode-qr"></use></svg>
             {% endif %}
           </td>
         </tr>
