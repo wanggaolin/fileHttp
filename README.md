@@ -6,8 +6,8 @@
 which git 2>> /dev/null || yum -y install git
 which git pip2 >> /dev/null || yum -y install epel-release
 which git pip2 >> /dev/null || yum -y install python-pip
-```
 # yum install python-markupsafe
+```
 
 ### 部署安装
 ```shell script
