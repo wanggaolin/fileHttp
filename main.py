@@ -16,7 +16,6 @@ if __name__ == "__main__":
                 debug=cfg["debug"],
                 host=cfg["host"],
                 port=cfg["port"],
-
             )
         except KeyboardInterrupt, e:
             pass

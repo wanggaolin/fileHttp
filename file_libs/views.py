@@ -29,9 +29,9 @@ def api_check_v3(*args,**kwargs):
         def wrapper_v3(*args, **kwargs):
             try:
                 if request.method == "POST":
-                    req_token = request.args.get("token", False)
-                    req_json = json.loads(urllib.unquote(request.args.get("data", False)))
-                    req_time = int(request.args.get("time", False))
+                    req_token = request.form.get("token", False)
+                    req_json = json.loads(urllib.unquote(request.form.get("data", False)))
+                    req_time = int(request.form.get("time", False))
                 else:
                     req_token = request.args.get("token", False)
                     req_json = json.loads(urllib.unquote(request.args.get("data", False)))
@@ -75,7 +75,7 @@ def views_file_list():
     return render_template('index.html', file_list=file_manger().file_list(dir_name=dir_name),dir_name=dir_name,n=n)
 
 @app.route('/file/download',methods=["GET"])
-@error_code(a=1)
+@error_code()
 def views_file_download():
     dir_name = request.args.get("dir","")
     file_path = request.args.get("file","")
@@ -95,6 +95,7 @@ def views_file_download():
 
 @app.route('/file/secure', methods=["GET"])
 @api_check_v3(min_size=-(60*60*5),max_size=60*60*5)
+@error_code()
 def views_file_download_secure():
     req_data = json.loads(urllib.unquote(request.args.get("data", False)))
     dir_name = req_data.get("dir", "")
@@ -122,6 +123,46 @@ def views_file_code():
     file_url = "http://%s/file/secure?time=%s&data=%s&token=%s" % (request.headers["Host"],req_data["time"],urllib.quote(json.dumps(req_data)),req_token)
     byte_io = make_code(file_url)
     return send_file(byte_io, mimetype='image/png')
+
+@app.route('/file/upload',methods=["POST"])
+def views_file_upload():
+    file_status = []
+    df = file_manger()
+    try:
+        ss = {"files": [], "name": ""}
+        for file_info in request.files.getlist('fileupload'):
+            upload_status = df.file_save(path_name=file_info.filename,obj=file_info,dir_name=request.args.get("dir",""))
+            if upload_status[0]:
+                file_status.append({"name": file_info.filename, "size": df.file_size(upload_status[1]["file_path"])})
+            else:
+                file_status.append({"name": file_info.filename, "size": 0,"error":upload_status[1]["msg"]})
+        ss["files"] = file_status
+    except ValueError,e:
+        ss["error"] = e.message
+    except Exception,e:
+        ss["error"] = "code error"
+        print traceback.format_exc()
+    return json.dumps(ss)
+
+@app.route('/upload',methods=["POST"])
+def views_file_secure_upload():
+    error_msg = ""
+    file_info = request.files.get('file')
+    try:
+        if request.form.get("token") != cfg_conf["token"]:
+            error_msg = "token error"
+        elif file_info:
+            upload_status = file_manger().file_save(path_name=file_info.filename,obj=file_info,dir_name="/")
+            if upload_status[0]:
+                return "update success"
+        else:
+            error_msg = "上传为空对象"
+    except ValueError,e:
+        error_msg = e.message
+    except Exception,e:
+        error_msg = "code error"
+        print traceback.format_exc()
+    return error_msg, 503
 
 @app.errorhandler(404)
 def not_found(error):

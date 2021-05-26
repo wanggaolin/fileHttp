@@ -20,3 +20,8 @@ pip2 install -r document/requests.txt
 ```shell script
 python main.py
 ```
+
+### 命令上传文件/安全
+```shell script
+curl http://0.0.0.0:5001/upload -F "file=@1.txt" -F "token=d329c61a58e37b20c19f723e2b0a8550" -X POST 
+```

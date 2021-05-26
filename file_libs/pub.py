@@ -152,6 +152,11 @@ class file_manger:
             s = round(s,1)
         return s
 
+    def hide(self,x):
+        print x, self.base_dir,3333
+        x = re.sub('^%s/' % self.base_dir,"",str(x))
+        print x, self.base_dir, 4444
+        return re.sub('^%s' % self.base_dir,"",x)
 
     @check
     def dir_path(self,**kwargs):
@@ -166,26 +171,20 @@ class file_manger:
                 "name": root_dir_name_list[:i][-1],
             })
         return  path_dir
-    #
-    # @check
-    # def file_save(self,**kwargs):
-    #     name = self.dir_name(kwargs["dir_name"])
-    #     root_dir_name = os.path.join(self.base_dir,name)
-    #     file_path = os.path.join(root_dir_name,dir_files(kwargs["path_name"]))
-    #     if os.path.exists(file_path):
-    #         raise ValueError("文件已经存在")
-    #     with open(file_path,r'w+') as w:
-    #         for chunk in kwargs["obj"].chunks():
-    #             w.write(chunk)
-    #     return True,{"msg":"上传文件: %s" % self.hide(x=file_path),"file_path":file_path}
-    #
-    # def file_type(self,x):
-    #     try:
-    #         file_name,file_ext = os.path.splitext(x)
-    #         return file_ext
-    #     except Exception,e:
-    #         Loging().error(traceback.format_exc())
-    #     return ""
+
+    @check
+    def file_save(self,**kwargs):
+        name = self.dir_name(kwargs["dir_name"])
+        root_dir_name = os.path.join(self.base_dir,name)
+        file_path = os.path.join(root_dir_name,dir_files(kwargs["path_name"]))
+        if os.path.exists(file_path):
+            raise ValueError("文件已经存在")
+        # with open(file_path,r'w+') as w:
+            # for chunk in kwargs["obj"].chunks():
+            #     w.write(chunk)
+        print file_path,12345
+        kwargs["obj"].save(file_path)
+        return True,{"msg":"上传文件: %s" % self.hide(x=file_path),"file_path":file_path}
 
     @check
     def file_path(self,**kwargs):
@@ -233,6 +232,3 @@ class api_verfy:
         text = json.dumps(sorted(kwargs["data"].items(), key=lambda parameters: parameters[0]),ensure_ascii=False)+str(kwargs["time"])
         mac = hmac.new(self.key, text.encode("utf-8"), hashlib.sha1)
         return mac.hexdigest()
-
-
-# print file_manger().file_list(dir_name="/")

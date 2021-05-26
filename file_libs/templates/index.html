@@ -11,6 +11,7 @@
 <body>
 <div class="index-main">
     <div>
+        <input type="hidden" value="{{ dir_name }}" id="dir_name">
         <span>位置: </span>
         <span class="c-666"><a href="/">/</a></span>
         {% for i in file_list.path_dir %}
@@ -51,9 +52,18 @@
     </table>
 </div>
 <img src="" alt="二维码" id="file_code" style="display: none">
+<div class="upload-main">
+    <input id="fileupload" type="file" name="fileupload" multiple style="" value="上传文件" class="form-control">
+    <div id="progress"></div>
+</div>
 <script type="text/javascript" src="/static/libs/icon/iconfont.js?n={{ n }}"></script>
 <script type="text/javascript" src="/static/js/jquery-3.6.0.min.js"></script>
 <script type="text/javascript" src="/static/js/site.js?n={{ n }}"></script>
+<script src="/static/js/file/vendor/jquery.ui.widget.js"></script>
+<script src="/static/js/file/jquery.iframe-transport.js"></script>
+<script src="/static/js/file/jquery.fileupload.js?n=1"></script>
+<link rel="stylesheet" type="text/css" href="/static/js/jbox/jBox.all.css"/>
+<script type="text/javascript" src="/static/js/jbox/jBox.all.js"></script>
 <script>
     $(function () {
         $(".code-icon").hover(function(){
@@ -63,7 +73,50 @@
            code_image_hide();
         })
     })
+    var upload_status = {"error":0,"success":0,"count":0}
+    $('#fileupload').fileupload({
+        dataType: 'json',
+        url: '/file/upload',
+        singleFileUploads:true,
+        add: function(e, data) {
+            $('#progress').show();
+            upload_status.count = data.originalFiles.length;
+            data.formData={"dir_name":$("dir_name").val()};
+            data.submit();
+        },
+    done: function (e, data) {
+        $('#progress').hide();
+        put_status = data.result.files;
+        if(data.result["error"]){
+            new jBox('Notice', {
+                content: "上传文件失败,ERROR:"+data.result["error"], color:"red",
+            });
+        }else{
+            for (var i=0;i<put_status.length;i++) {
+            if(put_status[i]["error"]){
+                new jBox('Notice', {
+                    content: "上传"+put_status[i]["name"]+"失败,"+put_status[i]["error"], color:"yellow",
+                });
+                upload_status.error+=1;
+            }else{
+                upload_status.success+=1;
+            }
+            };
+        }
 
+        if((upload_status.success+upload_status.error)==upload_status.count){
+            if(upload_status.error>0){
+                setTimeout("window.location.reload();",5000);
+            }else{
+                //window.location.reload();
+            }
+        }
+    },
+    progressall: function (e, data) {
+        var progress = parseInt(data.loaded / data.total * 100, 10);
+        $('#progress').css('width',progress + '%');
+        }
+    });
 </script>
 </body>
 </html>
