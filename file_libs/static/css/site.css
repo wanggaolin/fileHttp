@@ -36,3 +36,23 @@ body{
     margin-top: 40px;
     width: 100%;
 }
+@media only screen and (min-width: 600px) and (max-width: 768px){
+    .td_name > td:nth-of-type(1){
+        display: block;
+        width: 300px;
+        word-break:keep-all;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+    }
+}
+@media only screen and (max-width: 600px){
+    .td_name > td:nth-of-type(1){
+        display: block;
+        width: 50px;
+        word-break:keep-all;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+    }
+}
